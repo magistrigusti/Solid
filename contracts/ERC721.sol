@@ -1,37 +1,39 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 import "./IERC721.sol";
+import "./IERC721Metadata.sol";
 import "./ERC165.sol";
+import "./Strings.sol";
 import "./IERC721Receiver.sol";
-import "./math/SaveMath.sol";
-import "./utils/Address.sol";
 
-contract ERC721 is ERC165, IERC721 {
-  using SafeMath for uint256;
-  using Address for address;
+contract ERC721 is ERC165, IERC721, IERC721Metadata {
+  using String for uint256;
 
-  bytes4 private constant _ERC721_RECEIVED = 0x150b7a02;
+  string private _name;
+  string private _symbol;
 
-  mapping(uint256 => address) private _tokenOwner;
-  mapping(uint256 => address) private _tokenApprovals;
-  mapping(address => uint256) private _ownerTokensCount;
+  mapping(uint => address) private _owners;
+  mapping(address => uint) private _balances;
+  mapping(uint => address) private _tokenApprovals;
   mapping(address => mapping(address => bool)) private _operatorApprovals;
 
-  bytes4 private constant _InterfaceId_ERC721 = 0x80ac58cd;
-    /*
-   * 0x80ac58cd ===
-   *   bytes4(keccak256('balanceOf(address)')) ^
-   *   bytes4(keccak256('ownerOf(uint256)')) ^
-   *   bytes4(keccak256('approve(address,uint256)')) ^
-   *   bytes4(keccak256('getApproved(uint256)')) ^
-   *   bytes4(keccak256('setApprovalForAll(address,bool)')) ^
-   *   bytes4(keccak256('isApprovedForAll(address,address)')) ^
-   *   bytes4(keccak256('transferFrom(address,address,uint256)')) ^
-   *   bytes4(keccak256('safeTransferFrom(address,address,uint256)')) ^
-   *   bytes4(keccak256('safeTransferFrom(address,address,uint256,bytes)'))
-   */
+  constructor(string memory name_, string memory symbol_) {
+    _name = name_;
+    _symbol = symbol_;
+  }
 
-   constructor() public {
-    _registerInterface(_InterfaceId_ERC721);
-   }
+  function supportsInterface(bytes4 interfaceId) public view virtual overide(ERC165, IERC165) returns(bool) {
+    return interfaceId == type(IERC721).interfaceId ||
+      interfaceId == type(IERC721Metadata).interfaceId ||
+      super.supportsInterface(interfaceId);
+  }
+
+  function balanceOf (address owner) public view virtual returns (uint256) {
+    require(owner != address(0));
+
+    return _balances[owner];
+  }
+
+  
 }
+
