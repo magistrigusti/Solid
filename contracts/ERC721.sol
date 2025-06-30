@@ -110,6 +110,24 @@ contract ERC721 is ERC165, IERC721, IERC721Metadata {
   function _exists(uint256 tokenId) internal view virtual returns(bool) {
     return _ownerOd(tokenId) != address(0);
   }
+
+  function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual returns(bool) {
+    address owner = ownerOf(tokenId);
+
+    return(
+      spender == owner ||
+      isAprovedForAll(owner, spender) ||
+      getApproved(tokenId) == spender
+    );
+  }
+
+  function _safeMint(address to, uint256 tokenId) internal virtual {
+    _saveMint(to, tokenId, "");
+  }
+
+  function _safeMint(address to, uint256 tokenId, bytes memory data) internal  virtual {
+    
+  }
   
 }
 
