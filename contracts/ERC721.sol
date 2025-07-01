@@ -126,8 +126,98 @@ contract ERC721 is ERC165, IERC721, IERC721Metadata {
   }
 
   function _safeMint(address to, uint256 tokenId, bytes memory data) internal  virtual {
-    
+    _mint(to, tokenId);
+
+    require(_checkOnERC721Received(address(0), to, tokenId, data));
   }
+
+  function _mint(address to, uint256 tokenId) internal virtual {
+    require(to != address(0));
+
+    require(!_exists(tokenId));
+
+    _beforeTokenTransfer(address(0), to, tokenId, 1);
+
+    require(!_exists(tokenId));
+
+    unchecked {
+      _balance[to] += 1;
+    }
+    _owners[tokenId] = to;
+
+    emit Transfer(address(0), to, tokenId);
+
+    _afterTokenTransfer(address(0) to, tokenId, 1);
+  }
+
+  function _transfer(address from, address to, uint256 tokenId) interval virtual {
+    require (ownerOf(tokenId) == from);
+
+    require(to != address(0));
+
+    _beforeTokenTransfer(from, to, tokenId, 1);
+
+    require(ownerOf(tokenId) == from);
+
+    delete _tokenApprovals[tokenId];
+
+    unchecked {
+      _balances[from] -= 1;
+      _balances[to] += 1;
+    }
+    _owners[tokenId] = to;
+
+    emit Transfer(from, to, tokenId);
+
+    _afterTokenTransfer(from, to, tokenId, 1);
+  }
+
+  function _approve(addres to, uint256 tokenId) internal virtual {
+    _tokenApprovals[tokenId] = to;
+    emit Approval(ownerOf(tokenId), to, tokenId);
+  }
+
+  function _setApprovalForAll(address owner, address operator, bool approved) internal virtual {
+    require(owner != operator);
+    _operatorApprovals[owner][operator] = approved;
+    emit ApprovalForAll(owner, operator, approved);
+  }
+
+  function _requireMinted(uint256 tokenId) interval view virtual {
+    require(_exists(tokenId));
+  }
+
+  function _checkOnERC721Received(address from ,address to, uint256 tokenId, bytes memory data) private returns (bool) {
+    if(to.code.length > 0) {
+      try IERC721Receiver(to).onERC721Received(msg.sender, from, tokenId, data) returns(bytes4 retval) {
+        return retval == IERC721Receiver.onERC721Received.selector;
+      } cath (bytes memory reason) {
+        if (reason.length == 0) {
+          revert("Non-erc721 receiver!");
+        } else {
+          assembly {
+            revert(add(32, reason), mload(reason))
+          }
+        }
+      }
+    } else {
+      eturn true;
+    }
+  }
+
+  function _beforeTokenTransfer(address from, address to, uint, uint batchSzie) internal virtual {
+    if (batchSize > 1) {
+      if (from != address(0)) {
+        _balances[from] -= batchSize;
+      }
+
+      if (to != address(0)) {
+        _balances[to] += batchSize;
+      }
+    }
+  }
+
+  function _afterTokenTransfer(address from, address to, uint tokenId, uint batchSize) interval virtual {};
   
 }
 
