@@ -8,7 +8,7 @@ interface IERC4626 is IERC20, IERC20Metadata {
     address indexed sender,
     address indexed owner,
     uint assets,
-    uint shares,
+    uint shares
   );
 
   event Withdraw (

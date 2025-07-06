@@ -4,7 +4,7 @@ import "./MyToken.sol";
 
 contract Proxy{
   function doSend(
-    MyToken mtk
+    MyToken mtk,
     address owner,
     address spender,
     uint value,

@@ -66,7 +66,7 @@ abstract contract EPI712 is IERC5267 {
       address(this),
       bytes32(0),
       new uint256[](0)
-    )
+    );
   }
 
 }

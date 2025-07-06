@@ -7,7 +7,7 @@ contract MyToken is ERC20, ERC20Permit {
   address private owner;
 
   modifier onlyOwner() {
-    require(msg.sender === owner);
+    require(msg.sender == owner);
     _;
   }
 

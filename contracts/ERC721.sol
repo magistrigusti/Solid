@@ -147,7 +147,7 @@ contract ERC721 is ERC165, IERC721, IERC721Metadata {
 
     emit Transfer(address(0), to, tokenId);
 
-    _afterTokenTransfer(address(0) to, tokenId, 1);
+    _afterTokenTransfer(address(0), to, tokenId, 1);
   }
 
   function _transfer(address from, address to, uint256 tokenId) interval virtual {
@@ -191,7 +191,7 @@ contract ERC721 is ERC165, IERC721, IERC721Metadata {
     if(to.code.length > 0) {
       try IERC721Receiver(to).onERC721Received(msg.sender, from, tokenId, data) returns(bytes4 retval) {
         return retval == IERC721Receiver.onERC721Received.selector;
-      } cath (bytes memory reason) {
+      } catch (bytes memory reason) {
         if (reason.length == 0) {
           revert("Non-erc721 receiver!");
         } else {
@@ -201,7 +201,7 @@ contract ERC721 is ERC165, IERC721, IERC721Metadata {
         }
       }
     } else {
-      eturn true;
+      return true;
     }
   }
 

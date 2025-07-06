@@ -144,7 +144,7 @@ abstract contract ERC4626 is ERC20,  IERC4626 {
     }
 
     _burn(owner, shares);
-    _asset.transfer(receiver, assets)
+    _asset.transfer(receiver, assets);
 
     emit Withdraw(caller, receiver, owner, assets, shares);
   }
@@ -152,7 +152,7 @@ abstract contract ERC4626 is ERC20,  IERC4626 {
   function _convertToShares(
     uint assets, Math.Rounding rounding
   ) internal view virtual returns(uint) {
-    return assets,mulDiv(
+    return assets.mulDiv(
       totalSupply() + 10 ** _decimalOffset(),
       totalAssets() + 1,
       rounding
