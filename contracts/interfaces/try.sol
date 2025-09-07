@@ -17,14 +17,14 @@ contract ERC721 is IERC721, IERC721Metadata {
   mapping(uint => address) private _tokenApprovals;
   mapping(address => mapping(address => bool)) private _operatorApprovals;
 
-  modifier _requireMinted(uint tokeId) {
+  modifier _requireMined(uint tokenId) {
     require(_exists(tokenId), "not minted!");
     _;
   }
 
   constructor(string memory name_, string memory symbol_) {
     _name = name_;
-    _sybol = symbol_;
+    _symbol = symbol_;
   }
 
   function transferFrom(address from, address to, uint tokenId) external {
@@ -47,7 +47,7 @@ contract ERC721 is IERC721, IERC721Metadata {
   }
 
   function name() external view returns(string memory) {
-    return _name; 
+    return _name;
   }
 
   function symbol() external view returns(string memory) {
@@ -60,10 +60,10 @@ contract ERC721 is IERC721, IERC721Metadata {
     return _balances[owner];
   }
 
-  function ownerOf(uint tokenId) public view _requiureMinted(tokenId) returns(address) {
+  function ownerOf(uint tokenId) public view _requireMinted(tokenId) returns(address) {
     address _owner = _owners[tokenId];
     require(_owner != address(0), "invalid token id");
-    
+
     return _owner[tokenId];
   }
 
@@ -71,17 +71,15 @@ contract ERC721 is IERC721, IERC721Metadata {
     address _owner = ownerOf(tokenId);
 
     require(_owner == msg.sender || isApprovedForAll(_owner, msg.sender), "not an owner!");
-
     require(to != _owner, "cannot approve to self");
 
     _tokenApprovals[tokenId] = to;
-
+    
     emit Approvals(_owner, to, tokenId);
   }
 
   function setApprovalForAll(address operator, bool approved) public {
     require(msg.sender != operator, "cannot approve to self");
-
     _operatorApprovals[msg.sender][operator] = approved;
 
     emit ApprovalForAll(msg.sender, operator, approved);
@@ -101,7 +99,7 @@ contract ERC721 is IERC721, IERC721Metadata {
 
   function tokenURI(uint tokenId) external view _requireMinted(tokenId) returns(string memory) {
     string memory baseURI = _baseURI();
-    return bytes(baseURI).length > 0 ? 
+    return bytes(baseURI).length > 0 ?
       string(abi.encodePacked(baseURI, tokenId.toString())) : "";
   }
 
@@ -123,7 +121,7 @@ contract ERC721 is IERC721, IERC721Metadata {
     _transfer(from, to, tokenId);
 
     require(
-      _checkOnERC721Received(from, to, tokenId, data),
+      _checkOnERC721Received(from, to, tokenId, data), 
       "transfer to non-erc721 receiver"
     );
   }
@@ -131,17 +129,17 @@ contract ERC721 is IERC721, IERC721Metadata {
   function _checkOnERC721Received(
     address from, address to, uint tokenId, bytes memory data
   ) private returns(bool) {
-    if(to.code.length > 0) {
+    if (to.code.length > 0) {
       try IERC721Receiver(to).onERC721Received(
         msg.sender, from, tokenId, data
       ) returns(bytes4 retval) {
         return retval == IERC721Receiver.onERC721Received.selector;
       } catch(bytes memory reason) {
-        if(reason.length == 0) {
+        if (reason.length == 0) {
           revert("Transfer to non-erc721 receiver");
         } else {
           assembly {
-            revert(add(32,reason), mload(reason))
+            revert(add(32, reason), mload(reason))
           }
         }
       }
@@ -175,5 +173,3 @@ contract ERC721 is IERC721, IERC721Metadata {
     address from, address to, uint tokenId
   ) internal virtual {}
 }
-
- 
