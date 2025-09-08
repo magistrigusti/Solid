@@ -5,6 +5,7 @@ import "./IERC721Metadata.sol";
 import "../ERC165.sol";
 import "../Strings.sol";
 import "../IERC721Receiver.sol";
+// *
 
 contract ERC721 is IERC721, IERC721Metadata {
   using Strings for uint;
@@ -17,7 +18,7 @@ contract ERC721 is IERC721, IERC721Metadata {
   mapping(uint => address) private _tokenApprovals;
   mapping(address => mapping(address => bool)) private _operatorApprovals;
 
-  modifier _requireMined(uint tokenId) {
+  modifier _requireMinted(uint tokenId) {
     require(_exists(tokenId), "not minted!");
     _;
   }
@@ -29,7 +30,6 @@ contract ERC721 is IERC721, IERC721Metadata {
 
   function transferFrom(address from, address to, uint tokenId) external {
     require(_isApprovedOrOwner(msg.sender, tokenId), "not approved or owner!");
-
     _transfer(from, to, tokenId);
   }
 
@@ -74,14 +74,14 @@ contract ERC721 is IERC721, IERC721Metadata {
     require(to != _owner, "cannot approve to self");
 
     _tokenApprovals[tokenId] = to;
-    
+
     emit Approvals(_owner, to, tokenId);
   }
 
   function setApprovalForAll(address operator, bool approved) public {
     require(msg.sender != operator, "cannot approve to self");
-    _operatorApprovals[msg.sender][operator] = approved;
 
+    _operatorApprovals[msg.sender][operator] = approved;
     emit ApprovalForAll(msg.sender, operator, approved);
   }
 
@@ -99,8 +99,8 @@ contract ERC721 is IERC721, IERC721Metadata {
 
   function tokenURI(uint tokenId) external view _requireMinted(tokenId) returns(string memory) {
     string memory baseURI = _baseURI();
-    return bytes(baseURI).length > 0 ?
-      string(abi.encodePacked(baseURI, tokenId.toString())) : "";
+
+    return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString())) : "";
   }
 
   function _exists(uint tokenId) internal view returns(bool) {
@@ -121,7 +121,7 @@ contract ERC721 is IERC721, IERC721Metadata {
     _transfer(from, to, tokenId);
 
     require(
-      _checkOnERC721Received(from, to, tokenId, data), 
+      _checkOnERC721Received(from, to, tokenId, data),
       "transfer to non-erc721 receiver"
     );
   }
@@ -135,17 +135,15 @@ contract ERC721 is IERC721, IERC721Metadata {
       ) returns(bytes4 retval) {
         return retval == IERC721Receiver.onERC721Received.selector;
       } catch(bytes memory reason) {
-        if (reason.length == 0) {
-          revert("Transfer to non-erc721 receiver");
-        } else {
-          assembly {
-            revert(add(32, reason), mload(reason))
-          }
+        revert("Transfer to non-erc721 receiver");
+      } else {
+        assembly {
+          revert(add(32, reason), mload(reason))
         }
       }
-    } else {
-      return true;
     }
+  } else {
+    return true;
   }
 
   function _transfer(address from, address to, uint tokenId) internal {
@@ -165,7 +163,7 @@ contract ERC721 is IERC721, IERC721Metadata {
     _afterTokenTransfer(from, to, tokenId);
   }
 
-  function _beforeTokenTransfer(
+  function _beforeTokenTrtansfer(
     address from, address to, uint tokenId
   ) internal virtual {}
 
