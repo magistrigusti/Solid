@@ -24,7 +24,7 @@ contract ERC721 is IERC721, IERC721Metadata {
 
   constructor(string memory name_, string memory symbol_) {
     _name = name_;
-    _sybol = symbol_;
+    _symbol = symbol_;
   }
 
   function transferFrom(address from, address to, uint tokenId) external {
@@ -60,7 +60,7 @@ contract ERC721 is IERC721, IERC721Metadata {
     return _balances[owner];
   }
 
-  function ownerOf(uint tokenId) public view _requiureMinted(tokenId) returns(address) {
+  function ownerOf(uint tokenId) public view _requireMinted(tokenId) returns(address) {
     address _owner = _owners[tokenId];
     require(_owner != address(0), "invalid token id");
     
@@ -179,7 +179,7 @@ contract ERC721 is IERC721, IERC721Metadata {
           revert("Transfer to non-erc721 receiver");
         } else {
           assembly {
-            revert(add(32,reason), mload(reason))
+            revert(add(32, reason), mload(reason))
           }
         }
       }
