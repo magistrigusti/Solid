@@ -4,7 +4,7 @@ import "../interfaces/IERC721.sol";
 import "../ERC721URIStorage.sol";
 // import "../ERC721Enumerable.sol";
 
-contract DomToken is  ERC721 {
+contract DomToken is  ERC721, ERC721URIStorage {
   address public owner;
   uint currentTokenId;
 
@@ -22,5 +22,15 @@ contract DomToken is  ERC721 {
 
   function _baseURI() internal pure override returns(string memory) {
     return "ipfs://";
+  }
+
+  function _burn(uint tokenId) internal override(ERC721, ERC721URIStorage) {
+    super._burn(tokenId);
+  }
+
+  function tokenURI(
+    uint tokenId
+  ) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+    return super.tokenURI(tokenId);
   }
 }
