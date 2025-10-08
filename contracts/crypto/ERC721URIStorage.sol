@@ -5,7 +5,7 @@ import "../interfaces/ERC721.sol";
 abstract contract ERC721URIStorage is ERC721 {
   mapping(uint => string) private _tokenURIs;
 
-  function tokenURI(uint tokenId) public view virtual _requireMinted(tokenId) returns(string memory) {
+  function tokenURI(uint tokenId) public view virtual override _requireMinted(tokenId) returns(string memory) {
     string memory _tokenURI = _tokenURIs[tokenId];
     string memory base = _baseURI();
 

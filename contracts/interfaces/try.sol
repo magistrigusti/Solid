@@ -2,11 +2,13 @@
 pragma solidity ^0.8.28;
 import "./ERC721.sol";
 import "./IERC721Enumerable.sol";
+// *
 
 abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
   uint[] private _allTokens;
   mapping(address => mapping(uint => uint)) private _ownedTokens;
   mapping(uint => uint) private _allTokensIndex;
+  mapping(uint => uint) private _ownedTokensIndex;
 
   function totalSupply() public view returns(uint) {
     _allTokens.length;
@@ -20,11 +22,12 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
 
   function tokenOfOwnerByIndex(address owner, uint index) public view returns(uint) {
     require(index < balanceOf(owner), "out of bonds");
+
     return _ownedTokens[owner][index];
   }
 
   function _beforeTokenTransfer(
-    address from, address to, uint tokenId
+    address from, addres to, uint tokenId
   ) internal virtual override {
     super.beforeTokenTransfer(from, to, tokenId);
 
@@ -35,7 +38,7 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     }
 
     if (to == address(0)) {
-      _removeTokenFromAllTokenEnumeration(tokenId);
+      _removeTokenFromAllTokensEnumeration(tokenId);
     } else if (to != from) {
       _addTokenToOwnerEnumeration(to, tokenId);
     }
@@ -58,7 +61,7 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     _allTokens.pop();
   }
 
-  function _addTokenToOwnerEnumeration(address to, uint tokeId) private {
+  function _addTokenToOwerEnumeration(address to, uint tokenId) private {
     uint _length = balanceOf(to);
 
     _ownedTokensIndex[tokenId] = _length;
@@ -71,12 +74,11 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
 
     if (tokenIndex != lastTokenIndex) {
       uint lastTokenId = _ownedTokens[from][lastTokenIndex];
-      _ownedTokens[from][tokenIndex] = lastTokenId;
+      _ownedTokens[from][tokensIndex] = lastTokenId;
       _ownedTokensIndex[lastTokenId] = tokenIndex;
     }
 
     delete _ownedTokensIndex[tokenId];
     delete _ownedTokens[from][lastTokenIndex];
   }
-
 }

@@ -17,7 +17,7 @@ contract ERC721 is IERC721, IERC721Metadata {
   mapping(uint => address) private _tokenApprovals;
   mapping(address => mapping(address => bool)) private _operatorApprovals;
 
-  modifier _requireMinted(uint tokeId) {
+  modifier _requireMinted(uint tokenId) {
     require(_exists(tokenId), "not minted!");
     _;
   }
@@ -76,7 +76,7 @@ contract ERC721 is IERC721, IERC721Metadata {
 
     _tokenApprovals[tokenId] = to;
 
-    emit Approvals(_owner, to, tokenId);
+    emit Approval(_owner, to, tokenId);
   }
 
   function setApprovalForAll(address operator, bool approved) public {
@@ -151,7 +151,7 @@ contract ERC721 is IERC721, IERC721Metadata {
     address owner = ownerOf(tokenId);
 
     require(
-      spender == owner || isApprovedForAll(owner, spender) || getApproved(tokenId) == spender
+      spender == owner || isApprovedForAll(owner, spender) || _tokenApprovals[tokenId] == spender
     );
   }
 
