@@ -8,7 +8,7 @@ contract ERC165 is IERC165 {
 
   mapping(bytes4 => bool) private _supportedInterfaces;
 
-  constructor() internal {
+  constructor() {
     _registerInterface(_InterfaceId_ERC165);
   }
 

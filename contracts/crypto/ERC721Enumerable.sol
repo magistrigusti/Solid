@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 import "./ERC721.sol";
-import "./IERC721Enumerable.sol";
+import "../interfaces/IERC721Enumerable.sol";
 
 abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
   uint[] private _allTokens;
@@ -31,7 +31,7 @@ abstract contract ERC721Enumerable is ERC721, IERC721Enumerable {
     super.beforeTokenTransfer(from, to, tokenId);
 
     if (from == address(0)) {
-      _addTokenToAllEnumeration(tokenId);
+      _addTokenToAllTokensEnumeration(tokenId);
     } else if (from != to) {
       _removeTokenFromOwnerEnumeration(from, tokenId);
     }
