@@ -6,7 +6,7 @@ import "../ERC165.sol";
 import "../Strings.sol";
 import "../IERC721Receiver.sol";
 
-contract ERC721 is IERC721, IERC721Metadata {
+contract ERC721 is IERC721, IERC165, IERC721Metadata {
   using Strings for uint;
 
   string private _name;
@@ -40,7 +40,7 @@ contract ERC721 is IERC721, IERC721Metadata {
   }
 
   function safeTransferFrom(
-    address from, address to, uint tokenId, bytes calldata data
+    address from, address to, uint tokenId, bytes memory data
   ) public {
     require(_isApprovedOrOwner(msg.sender, tokenId), "not owner!");
     _safeTransfer(from, to, tokenId, data);
@@ -93,6 +93,12 @@ contract ERC721 is IERC721, IERC721Metadata {
 
   function isApprovedForAll(address owner, address operator) public view returns(bool) {
     return _operatorApprovals[owner][operator];
+  }
+
+  function supportsInterface(bytes4 interfaceId) public view virtual override returns(bool) {
+    return interfaceId == type(IERC721).interfaceId ||
+      interfaceId == type(IERC721Metadata).interfaceId ||
+      super.supportsInterface(interfaceId);
   }
 
   function _safeMint(address to, uint tokenId) internal virtual {

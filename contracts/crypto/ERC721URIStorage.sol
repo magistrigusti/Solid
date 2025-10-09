@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
-import "../interfaces/ERC721.sol";
+import "./ERC721.sol";
 
 abstract contract ERC721URIStorage is ERC721 {
   mapping(uint => string) private _tokenURIs;
@@ -20,9 +20,9 @@ abstract contract ERC721URIStorage is ERC721 {
     return super.tokenURI(tokenId);
   }
   function _setTokenURI(
-    uint tokenId, string memory tokenURI
+    uint tokenId, string memory _tokenURI
   ) internal virtual _requireMinted(tokenId) {
-    _tokenURIs[tokenId] = tokenId;
+    _tokenURIs[tokenId] = _tokenURI;
   }
 
   function _burn(uint tokenId) internal virtual override {

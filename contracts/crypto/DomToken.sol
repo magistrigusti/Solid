@@ -2,7 +2,7 @@
 pragma solidity ^0.8.28;
 import "../interfaces/IERC721.sol";
 import "../ERC721URIStorage.sol";
-import "../interfaces/ERC721Enumerable.sol";
+import "./ERC721Enumerable.sol";
 
 contract DomToken is  ERC721, ERC721Enumerable, ERC721URIStorage {
   address public owner;
@@ -18,6 +18,14 @@ contract DomToken is  ERC721, ERC721Enumerable, ERC721URIStorage {
     _safeMint(to, currentTokenId);
     _setTokenURI(currentToken, tokenId);
     currentTokenId++;
+  }
+
+  function supportsInterface(bytes4 interfaceId)
+    public view
+    override(ERC721, ERC721Enumerable)
+    returns (bool)
+  {
+    return super.supportsInterface(interfaceId);
   }
 
   function _baseURI() internal pure override returns(string memory) {
