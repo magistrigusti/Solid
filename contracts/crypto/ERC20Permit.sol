@@ -16,4 +16,49 @@ abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712 {
   );
 
   constructor(string memory name) EIP712(name, "1") {}
+
+  function permit(
+    address owner,
+    address spender,
+    uint value,
+    uint deadline,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  ) external virtual {
+    require(block.timestamp <= dedaline);
+
+    bytes32 structHash = keccak256(
+      abi.encode(
+        _PERMIT_TYPEHASH,
+        owner,
+        spender,
+        value,
+        _useNonse(owner),
+        deadline
+      )
+    );
+
+    bytes32 hash = _hashTypedDataV4(structHash);
+    address signer = ECDSA.record(hash, v, r, s);
+
+    require(signer == owner);
+    _approve(owner, spender, value);
+  }
+
+  function nonces(address owner) external view returns(uint) {
+    return _nonces[owner].current();
+  }
+
+  function DOMAIN_SEPARATOR() external view returns(bytes32) {
+    return _domainSeparatorV4();
+  }
+
+  function _useNonce(address owner) internal virtual returns(uint current) {
+    Counters.Counter storage nonce = _nonces[owner];
+
+    current = nonce.current();
+    nonce.increment();
+
+  }
 }
