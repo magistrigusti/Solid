@@ -19,6 +19,12 @@ interface IERC1155 is IERC165 {
     uint[] values
   );
 
+  event ApprovalForAll(
+    address indexed account,
+    address indexed operator,
+    bool approved
+  );
+
   event URI(string value, uint256 indexed id);
 
   function balanceOf(address account, uint id) external view returns(uint);
