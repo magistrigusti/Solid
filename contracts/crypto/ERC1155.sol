@@ -3,8 +3,9 @@ pragma solidity ^0.8.28;
 import "../interfaces/IERC1155MetadataURI.sol";
 import "../interfaces/IERC1155.sol";
 import "../interfaces/IERC1155Receiver.sol";
+import "./ERC165.sol";
 
-contract ERC1155 is IERC1155, IERC1155MetadataURI {
+contract ERC1155 is ERC165, IERC1155, IERC1155MetadataURI {
   mapping (uint => mapping(address => uint)) private _balances;
   mapping (address => mapping(address => bool)) private _operatorApprovals;
   string private _uri;
@@ -13,7 +14,9 @@ contract ERC1155 is IERC1155, IERC1155MetadataURI {
     _setURI(uri_);
   }
 
-  function supportsInterface(bytes4 interfaceId) public view virtual returns(bool) {
+  function supportsInterface(
+    bytes4 interfaceId
+  ) public view override(ERC165, IERC165) virtual returns(bool) {
     return 
       interfaceId == type(IERC1155).interfaceId ||
       interfaceId == type(IERC1155MetadataURI).interfaceId ||
