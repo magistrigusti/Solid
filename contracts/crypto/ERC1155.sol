@@ -65,9 +65,7 @@ contract ERC1155 is ERC165, IERC1155, IERC1155MetadataURI {
     uint amount,
     bytes calldata data
   ) public virtual {
-    require(
-      from == msg.sender || isApprovedForAll(from, msg.sender)
-    );
+    require(from == msg.sender || isApprovedForAll(from, msg.sender));
     
     _safeTransferFrom(from, to, id, amount, data);
   }
@@ -79,9 +77,8 @@ contract ERC1155 is ERC165, IERC1155, IERC1155MetadataURI {
     uint[] calldata amounts,
     bytes calldata data
   ) public virtual {
-    require(
-      from == msg.sender || isApprovedForAll(from, msg.sender)
-    );
+    require(from == msg.sender || isApprovedForAll(from, msg.sender));
+
     _safeBatchTransferFrom(from, to, ids, amounts, data);
   }
 
@@ -117,7 +114,7 @@ contract ERC1155 is ERC165, IERC1155, IERC1155MetadataURI {
     address from, 
     address to,
     uint[] calldata ids,
-    uint[] calldata amount,
+    uint[] calldata amounts,
     bytes calldata data
   ) internal virtual {
     require(ids.length == amounts.length);
@@ -129,10 +126,9 @@ contract ERC1155 is ERC165, IERC1155, IERC1155MetadataURI {
 
     for(uint i = 0; i < ids.length; ++i) {
       uint id = ids[i];
-
       uint amount = amounts[i];
-
       uint fromBalance = _balances[id][from];
+      
       require(fromBalance >= amount);
       _balances[id][from] = fromBalance - amount;
       _balances[id][to] += amount;
