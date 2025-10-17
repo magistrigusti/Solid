@@ -104,9 +104,7 @@ contract ERC1155 is ERC165, IERC1155, IERC1155MetadataURI {
     _balances[id][to] += amount;
 
     emit TransferSingle(operator, from, to, id, amount);
-
     _afterTokenTransfer(operator, from, to, ids, amounts, data);
-
     _doSafeTransferAcceptanceCheck(operator, from, to, id, amount, data);
   }
 
@@ -213,7 +211,7 @@ contract ERC1155 is ERC165, IERC1155, IERC1155MetadataURI {
       } catch Error(string memory reason) {
         revert(reason);
       } catch {
-        revert("Non-ERC115 receiver!");
+        revert("Non-ERC1155 receiver!");
       }
     }
   }
