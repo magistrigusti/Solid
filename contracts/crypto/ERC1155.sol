@@ -82,6 +82,99 @@ contract ERC1155 is ERC165, IERC1155, IERC1155MetadataURI {
     _safeBatchTransferFrom(from, to, ids, amounts, data);
   }
 
+  function _mint(
+    address to,
+    uint id,
+    uint amount,
+    bytes memory data
+  ) internal virtual {
+    require(to != address(0));
+
+    address operator = msg.sender;
+    uint[] memory ids = _asSingletonArray(id);
+    uint[] memory amounts = _asSingletonArray(amount);
+
+    _beforeTokenTransfer(operator, address(0), to, ids, amounts, data);
+  
+    _balances[id][to] += amount;
+
+    emit TransferSingle(operator, address(0), to, id, amount);
+
+    _afterTokenTransfer(operator, address(0), to, ids, amounts, data);
+
+    _doSafeTransferAcceptanceCheck(operator, address(0), to, id, amount, data);
+  }
+
+  function _mintBatch(
+    address to,
+    uint[] memory ids,
+    uint[] memory amounts,
+    bytes memory data
+  ) internal virtual {
+    require(ids.length == amounts.length);
+    require(to != address(0));
+
+    address operator = msg.sender;
+
+    _beforeTokenTransfer(operator, address(0), to, ids, amounts, data);
+
+    for(uint i = 0; i < ids.length; ++i) {
+      _balances[ids[i]][to] += amounts[i];
+    }
+
+    emit TransferBatch(operator, address(0), to, ids, amounts);
+    _afterTokenTransfer(operator, address(0), to, ids, amounts, data);
+    _doSafeBatchTransferAcceptanceCheck(operator, address(0), to, ids, amounts, data);
+
+  }
+
+  function _burn(
+    address from,
+    uint id,
+    uint amount
+  ) internal virtual {
+    require(from != address(0));
+
+    address operator = msg.sender;
+    uint[] memory ids = _asSingletonArray(id);
+    uint[] memory amounts = _asSingletonArray(amount);
+
+    _beforeTokenTransfer(operator, from, address(0), ids, amounts, "");
+
+    uint fromBalance = _balances[id][from];
+    require(fromBalance >= amount);
+
+    _balances[id][from] = fromBalance - amount;
+
+    emit TransferSingle(operator, from, address(0), id, amount);
+    _afterTokenTransfer(operator, from, address(0), ids, amounts, "");
+    
+  }
+
+  function _burnBatch(
+    address from,
+    uint[] memory ids,
+    uint[] memory amounts
+  ) internal virtual {
+    require(from != address(0));
+
+    address operator = msg.sender;
+
+    _beforeTokenTransfer(operator, address(0), ids, amounts, "");
+
+    for(uint i = 0; i < ids.length; ++i) {
+      uint id = ids[i];
+      uint amount = amounts[i];
+      uint fromBalance = _balances[id][from];
+
+      require(fromBalance >= amount);
+      _balances[id][from] = fromBalance - amount;
+    }
+
+    emit TransferBatch(operator, from, address(0), ids, amounts);
+    _afterTokenTransfer(operator, from, to, address(0), amounts, "");
+  }
+
   function _safeTransferFrom(
     address from,
     address to,
