@@ -9,7 +9,9 @@ contract Storage {
   function store(uint _newVal) external {
     myVal = _newVal;
     emit Stored(myVal);
+  }
 
-    function Store()
+  function read() external view retirns(uint) {
+    return myVal;
   }
 }
